@@ -92,18 +92,14 @@ public class Guesses
             doSomething.apply(res);
         }
 
-        List<Integer> candidates = getCandidates(s, res);
-        for (int i=0; i < candidates.size(); i++)
+        for (int i=0; i < s.size(); i++)
         {
-            res.add(candidates.get(i));
+            if (res.contains(s.get(i)))
+                continue;
+            res.add(s.get(i));
             generatePermutations(s, res, doSomething);
-            res.remove(candidates.get(i));
+            res.remove(s.get(i));
         }
-    }
-
-    private static List<Integer> getCandidates(List<Integer> s, List res)
-    {
-        return s.stream().filter(x -> !res.contains(x)).collect(Collectors.toList());
     }
 
     public static boolean winPerm(List<Integer> perm, List<Set<Integer>> guesses) {
