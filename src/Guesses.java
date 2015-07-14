@@ -89,6 +89,7 @@ public class Guesses
         if (pos == s)
         {
             doSomething.apply(res);
+            return;
         }
 
         for (int i=0; i < s; i++)
