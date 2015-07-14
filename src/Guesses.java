@@ -56,7 +56,7 @@ public class Guesses
         return c;
     }
 
-    public static class Counter implements Function<List<Integer>, Void> {
+    public static class Counter implements Function<int[], Void> {
         public int total = 0;
         private final List<Set<Integer>> guesses;
 	
@@ -64,7 +64,7 @@ public class Guesses
             this.guesses = guesses;
         }
 	
-        public Void apply(List<Integer> perm) {
+        public Void apply(int[] perm) {
             if (winPerm(perm, guesses))
                 total++;
             return null;
@@ -72,39 +72,44 @@ public class Guesses
     }
 
     public static int numberOfWinningPermutations(List<Set<Integer>> guesses) {
-        List<Integer> order = IntStream.range(0, guesses.size()).mapToObj(Integer::valueOf).collect(Collectors.toList());
         Counter c = new Counter(guesses);
-        generatePermutations(order, c);
+        generatePermutations(guesses.size(), c);
 
         return c.total;
     }
 
-    public static void generatePermutations(List<Integer> s, Function<List<Integer>, Void> doSomething)
+    public static void generatePermutations(int s, Function<int[], Void> doSomething)
     {
-        List<Integer> res = new ArrayList<>();
-        generatePermutations(s, res, doSomething);
+        int[] res = new int[s];
+        generatePermutations(s, res, 0, doSomething);
     }
 
-    public static void generatePermutations(List<Integer> s, List<Integer> res, Function<List<Integer>, Void> doSomething)
+    public static void generatePermutations(int s, int[] res, int pos, Function<int[], Void> doSomething)
     {
-        if (res.size() == s.size())
+        if (pos == s)
         {
             doSomething.apply(res);
         }
 
-        for (int i=0; i < s.size(); i++)
+        for (int i=0; i < s; i++)
         {
-            if (res.contains(s.get(i)))
+            if (contains(res, pos, i))
                 continue;
-            res.add(s.get(i));
-            generatePermutations(s, res, doSomething);
-            res.remove(s.get(i));
+            res[pos] = i;
+            generatePermutations(s, res, pos +1, doSomething);
         }
     }
 
-    public static boolean winPerm(List<Integer> perm, List<Set<Integer>> guesses) {
-        for (int i=0; i < perm.size(); i++)
-            if (!guesses.get(i).contains(perm.get(i)))
+    private static boolean contains(int[] a, int max, int x) {
+        for (int i=0; i < max; i++)
+            if (a[i] == x)
+                return true;
+        return false;
+    }
+
+    public static boolean winPerm(int[] perm, List<Set<Integer>> guesses) {
+        for (int i=0; i < perm.length; i++)
+            if (!guesses.get(i).contains(perm[i]))
                 return false;
         return true;
     }
